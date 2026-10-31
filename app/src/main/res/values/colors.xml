@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Koshi palette: black ground, white type and hairlines, one red for state. -->
+    <color name="hc_black">#FF000000</color>
+    <color name="hc_ink">#FF141414</color>
+    <color name="hc_line">#29FFFFFF</color>
+    <color name="hc_line_faint">#12FFFFFF</color>
+    <color name="hc_line_strong">#6BFFFFFF</color>
+    <color name="hc_white">#FFF2F2F0</color>
+    <color name="hc_auto">#FFBDBDBB</color>
+    <color name="hc_grey">#FF8C8C8A</color>
+    <color name="hc_grey_dim">#FF545452</color>
+    <color name="hc_red">#FFE2231A</color>
 </resources>

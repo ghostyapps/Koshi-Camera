@@ -25,3 +25,5 @@ output-metadata.json
 .tmp.driveupload/
 app/nothing/
 app/standard/
+# Release signing secrets
+keystore.properties

@@ -9,6 +9,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,17 +37,8 @@ public class LutManagerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // --- 1. TAM EKRAN VE GİZLİ BARLAR ---
-        getWindow().setNavigationBarColor(android.graphics.Color.BLACK);
-
-        // Sistem UI gizleme bayrakları (MainActivity ile aynı)
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-
         setContentView(R.layout.activity_lut_manager);
+        applySystemBarInsets(findViewById(R.id.root));
 
         prefs = getSharedPreferences("HeyCamSettings", MODE_PRIVATE);
 
@@ -72,6 +66,15 @@ public class LutManagerActivity extends AppCompatActivity {
 
         setupRecycler();
         loadLuts();
+    }
+
+    // Edge-to-edge: keep content clear of the status and navigation bars.
+    static void applySystemBarInsets(View root) {
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
     }
 
     // --- YENİ METOD: RESTORE LOGIC ---

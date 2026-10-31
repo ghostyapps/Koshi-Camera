@@ -3,10 +3,9 @@ package com.ghostyapps.heycam;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.util.List;
@@ -40,8 +39,10 @@ public class LutAdapter extends RecyclerView.Adapter<LutAdapter.LutViewHolder> {
     public void onBindViewHolder(@NonNull LutViewHolder holder, int position) {
 
         // --- POZİSYON 0: "NO LUT" SEÇENEĞİ ---
+        holder.divider.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
+
         if (position == 0) {
-            holder.txtName.setText("No LUT (Original)");
+            holder.txtName.setText("None");
 
             // "No LUT" seçeneği silinemez, çöp kutusunu gizle
             holder.btnDelete.setVisibility(View.GONE);
@@ -52,8 +53,7 @@ public class LutAdapter extends RecyclerView.Adapter<LutAdapter.LutViewHolder> {
             // Eğer kayıtlı isim boşsa veya null ise, "No LUT" seçilidir
             boolean isNoLutSelected = (selectedLutName == null || selectedLutName.isEmpty());
 
-            holder.imgCheck.setVisibility(isNoLutSelected ? View.VISIBLE : View.GONE);
-            holder.itemContainer.setAlpha(isNoLutSelected ? 1.0f : 0.6f);
+            bindSelected(holder, isNoLutSelected);
 
             holder.itemView.setOnClickListener(v -> {
                 selectedLutName = ""; // Seçimi temizle
@@ -72,8 +72,7 @@ public class LutAdapter extends RecyclerView.Adapter<LutAdapter.LutViewHolder> {
         holder.btnDelete.setVisibility(View.VISIBLE); // Dosyalar silinebilir
 
         boolean isSelected = file.getName().equals(selectedLutName);
-        holder.imgCheck.setVisibility(isSelected ? View.VISIBLE : View.GONE);
-        holder.itemContainer.setAlpha(isSelected ? 1.0f : 0.6f);
+        bindSelected(holder, isSelected);
 
         holder.itemView.setOnClickListener(v -> {
             selectedLutName = file.getName();
@@ -90,6 +89,13 @@ public class LutAdapter extends RecyclerView.Adapter<LutAdapter.LutViewHolder> {
         holder.btnDelete.setOnClickListener(v -> listener.onLutDeleted(file));
     }
 
+    // Selected row: red underline under the name, regular instead of light weight.
+    private void bindSelected(LutViewHolder holder, boolean selected) {
+        holder.selectedLine.setVisibility(selected ? View.VISIBLE : View.GONE);
+        holder.txtName.setTypeface(ResourcesCompat.getFont(holder.itemView.getContext(),
+                selected ? R.font.barlow_regular : R.font.barlow_light));
+    }
+
     @Override
     public int getItemCount() {
         // Dosya sayısı + 1 (No LUT seçeneği için)
@@ -99,16 +105,16 @@ public class LutAdapter extends RecyclerView.Adapter<LutAdapter.LutViewHolder> {
 
     static class LutViewHolder extends RecyclerView.ViewHolder {
         TextView txtName;
-        ImageButton btnDelete;
-        ImageView imgCheck;
-        View itemContainer;
+        TextView btnDelete;
+        View selectedLine;
+        View divider;
 
         public LutViewHolder(@NonNull View itemView) {
             super(itemView);
             txtName = itemView.findViewById(R.id.txt_lut_name);
             btnDelete = itemView.findViewById(R.id.btn_delete_lut);
-            imgCheck = itemView.findViewById(R.id.img_check);
-            itemContainer = itemView.findViewById(R.id.item_container);
+            selectedLine = itemView.findViewById(R.id.view_selected_line);
+            divider = itemView.findViewById(R.id.view_divider);
         }
     }
 }

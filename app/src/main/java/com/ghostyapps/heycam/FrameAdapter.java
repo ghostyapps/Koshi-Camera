@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.util.List;
@@ -62,11 +64,13 @@ public class FrameAdapter extends RecyclerView.Adapter<FrameAdapter.FrameViewHol
     public void onBindViewHolder(@NonNull FrameViewHolder holder, int position) {
         // --- POZİSYON 0: NO FRAME ---
         if (position == 0) {
-            holder.imgThumb.setImageResource(R.drawable.ic_block); // Boş ikon
-            holder.imgThumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            // Empty tile; clear the tag so a pending async load can't land here
+            holder.imgThumb.setTag(null);
+            holder.imgThumb.setImageDrawable(null);
+            holder.txtName.setText("None");
 
             boolean isNone = (selectedName == null || selectedName.isEmpty());
-            holder.selectionBorder.setVisibility(isNone ? View.VISIBLE : View.GONE);
+            bindSelected(holder, isNone);
 
             holder.itemView.setOnClickListener(v -> updateSelection(null, holder.getAdapterPosition()));
             return;
@@ -89,12 +93,21 @@ public class FrameAdapter extends RecyclerView.Adapter<FrameAdapter.FrameViewHol
         }
 
         holder.imgThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        String name = file.getName();
+        holder.txtName.setText(name.substring(0, name.length() - ".png".length()));
 
         // Seçim Durumu
-        boolean isSelected = file.getName().equals(selectedName);
-        holder.selectionBorder.setVisibility(isSelected ? View.VISIBLE : View.GONE);
+        boolean isSelected = name.equals(selectedName);
+        bindSelected(holder, isSelected);
 
         holder.itemView.setOnClickListener(v -> updateSelection(file, holder.getAdapterPosition()));
+    }
+
+    private void bindSelected(FrameViewHolder holder, boolean selected) {
+        holder.selectionBorder.setVisibility(selected ? View.VISIBLE : View.GONE);
+        holder.selectionDot.setVisibility(selected ? View.VISIBLE : View.GONE);
+        holder.txtName.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),
+                selected ? R.color.hc_white : R.color.hc_grey));
     }
 
     // --- AKILLI SEÇİM GÜNCELLEME ---
@@ -195,11 +208,15 @@ public class FrameAdapter extends RecyclerView.Adapter<FrameAdapter.FrameViewHol
     static class FrameViewHolder extends RecyclerView.ViewHolder {
         ImageView imgThumb;
         View selectionBorder;
+        View selectionDot;
+        TextView txtName;
 
         public FrameViewHolder(@NonNull View itemView) {
             super(itemView);
             imgThumb = itemView.findViewById(R.id.img_frame_thumb);
             selectionBorder = itemView.findViewById(R.id.view_selection_border);
+            selectionDot = itemView.findViewById(R.id.view_selection_dot);
+            txtName = itemView.findViewById(R.id.txt_frame_name);
         }
     }
 }

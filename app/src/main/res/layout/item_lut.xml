@@ -1,56 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    android:layout_marginHorizontal="16dp"
-    app:cardBackgroundColor="#1A1A1A"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="0dp">
+    android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <View
+        android:id="@+id/view_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/hc_line_faint" />
+
+    <LinearLayout
         android:id="@+id/item_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:background="@drawable/hc_row"
+        android:orientation="horizontal"
+        android:paddingStart="24dp">
 
-        <!-- Seçili olduğunu gösteren ikon (Başlangıçta gizli) -->
-        <ImageView
-            android:id="@+id/img_check"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_check_circle"
-            android:tint="@android:color/white"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/txt_lut_name"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:fontFamily="@font/productsans_bold"
-            android:text="Cinematic Teal.cube"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_delete_lut"
-            app:layout_constraintStart_toEndOf="@id/img_check"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="15dp"
+            android:paddingBottom="14dp">
+            <TextView
+                android:id="@+id/txt_lut_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/barlow_light"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/hc_white"
+                android:textSize="18sp" />
+            <View
+                android:id="@+id/view_selected_line"
+                android:layout_width="120dp"
+                android:layout_height="1.5dp"
+                android:layout_marginTop="7dp"
+                android:background="@color/hc_red"
+                android:visibility="gone" />
+        </LinearLayout>
 
-        <ImageButton
+        <TextView
             android:id="@+id/btn_delete_lut"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_delete"
-            android:tint="#FF5252"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+            style="@style/HC.Caps"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="top|end"
+            android:paddingStart="20dp"
+            android:paddingTop="19dp"
+            android:paddingEnd="24dp"
+            android:text="Delete"
+            android:textColor="@color/hc_grey_dim" />
+    </LinearLayout>
+</LinearLayout>
