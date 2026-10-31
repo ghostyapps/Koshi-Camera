@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108" role="img" aria-label="KOSHI — L3 / Siyah objektif">
+<rect width="108" height="108" fill="#E2231A"/>
+<circle cx="54" cy="54" r="32.5" fill="#000000"/>
+<circle cx="54" cy="54" r="29.2" fill="none" stroke="#8C8C8A" stroke-width="0.8"/>
+<g transform="translate(53 53) scale(0.66) translate(-54 -54)">
+<path d="M52 26V43 M31 29L39 38 M73 29L65 38 M27 49H79 M45 49C45 63 38 73 27 79 M60 49V72Q60 77 65 77H69V68" fill="none" stroke="#F2F2F0" stroke-width="8.788" stroke-linecap="square" stroke-linejoin="round"/>
+<circle cx="81" cy="81" r="4.8" fill="#E2231A"/>
+</g>
+</svg>

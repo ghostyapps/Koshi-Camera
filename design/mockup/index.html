@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HeyCam — Arayüz Önerisi</title>
+<style>
+@font-face { font-family: Barlow; font-weight: 300; src: url(assets/Barlow-Light.ttf); }
+@font-face { font-family: Barlow; font-weight: 400; src: url(assets/Barlow-Regular.ttf); }
+@font-face { font-family: Barlow; font-weight: 500; src: url(assets/Barlow-Medium.ttf); }
+@font-face { font-family: Barlow; font-weight: 600; src: url(assets/Barlow-SemiBold.ttf); }
+@font-face { font-family: BarlowC; font-weight: 400; src: url(assets/BarlowCondensed-Regular.ttf); }
+@font-face { font-family: BarlowC; font-weight: 500; src: url(assets/BarlowCondensed-Medium.ttf); }
+
+:root {
+  --black: #000;
+  --ink-1: #0b0b0b;   /* yüzey */
+  --ink-2: #141414;   /* yükseltilmiş yüzey */
+  --line: rgba(255,255,255,.16);
+  --line-strong: rgba(255,255,255,.42);
+  --white: #f2f2f0;
+  --grey: #8c8c8a;
+  --grey-dim: #545452;
+  --red: #e2231a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--black); color: var(--white); font-family: Barlow, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+body { padding: 56px 64px 96px; }
+.num { font-variant-numeric: tabular-nums; }
+.caps { text-transform: uppercase; letter-spacing: .14em; font-size: 10px; font-weight: 500; }
+
+/* ---------- Sayfa (poster) ---------- */
+header.poster { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 48px; border-bottom: 1px solid var(--line); padding-bottom: 32px; margin-bottom: 48px; }
+.wordmark { display: flex; align-items: center; gap: 14px; }
+.wordmark .dot { width: 34px; height: 34px; border-radius: 50%; background: var(--red); display: grid; place-items: center; font-weight: 600; font-size: 13px; letter-spacing: .02em; }
+.wordmark h1 { font-weight: 300; font-size: 44px; letter-spacing: -.01em; }
+.poster p { color: var(--grey); font-size: 13px; line-height: 1.6; max-width: 380px; }
+.poster p b { color: var(--white); font-weight: 500; }
+.poster .meta { text-align: right; }
+.poster .meta .caps { color: var(--grey); display: block; margin-bottom: 6px; }
+.poster .meta .v { font-weight: 300; font-size: 22px; }
+
+.screens { display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; transform-origin: top center; }
+.screen-col { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+.screen-col .label { display: flex; gap: 12px; align-items: baseline; }
+.screen-col .label .n { color: var(--red); font-weight: 500; font-size: 12px; }
+.screen-col .label .t { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 500; }
+.screen-col .desc { color: var(--grey); font-size: 12px; line-height: 1.55; max-width: 360px; }
+
+/* ---------- Telefon ---------- */
+.phone { width: 360px; height: 800px; border-radius: 44px; background: var(--black); position: relative; overflow: hidden;
+  box-shadow: 0 0 0 1px #262626, 0 0 0 9px #0d0d0d, 0 0 0 10px #2a2a2a, 0 40px 80px rgba(0,0,0,.6); user-select: none; }
+.statusbar { height: 34px; display: flex; justify-content: space-between; align-items: center; padding: 6px 26px 0; font-size: 12px; font-weight: 500; }
+.statusbar .cam { width: 10px; height: 10px; border-radius: 50%; background: #111; box-shadow: 0 0 0 1px #222; }
+.navbar { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 108px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.55); }
+
+/* Üst şerit */
+.strip { height: 44px; display: flex; align-items: center; padding: 0 18px; gap: 16px; font-size: 12px; font-weight: 500; letter-spacing: .08em; }
+.strip .it { display: flex; align-items: center; gap: 5px; color: var(--grey-dim); cursor: pointer; }
+.strip .it.on { color: var(--white); }
+.strip .it svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.25; }
+.strip .fmt { border: 1px solid var(--line-strong); padding: 3px 6px 2px; color: var(--white); letter-spacing: .1em; font-size: 11px; }
+.strip .fmt.raw { border-color: var(--red); }
+.strip .sp { flex: 1; }
+.strip .count { color: var(--white); font-weight: 400; letter-spacing: .02em; }
+.batt { width: 22px; height: 11px; border: 1px solid var(--white); border-radius: 2px; position: relative; padding: 1.5px; }
+.batt::after { content: ""; position: absolute; right: -3px; top: 3px; width: 2px; height: 3px; background: var(--white); }
+.batt i { display: block; height: 100%; width: 70%; background: var(--white); }
+.menu-btn { width: 18px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; }
+.menu-btn i { height: 1px; background: var(--white); }
+.menu-btn i:last-child { width: 60%; }
+
+/* Vizör */
+.vf { width: 360px; height: 480px; position: relative; overflow: hidden; background: #111; }
+.vf .img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: filter .3s; }
+.vf .bracket { position: absolute; width: 20px; height: 20px; border-color: rgba(255,255,255,.85); border-style: solid; border-width: 0; }
+.vf .tl { top: 16px; left: 16px; border-top-width: 1px; border-left-width: 1px; }
+.vf .tr { top: 16px; right: 16px; border-top-width: 1px; border-right-width: 1px; }
+.vf .bl { bottom: 16px; left: 16px; border-bottom-width: 1px; border-left-width: 1px; }
+.vf .br { bottom: 16px; right: 16px; border-bottom-width: 1px; border-right-width: 1px; }
+.vf .focal { position: absolute; right: 22px; bottom: 24px; font-size: 13px; font-weight: 500; text-shadow: 0 0 6px rgba(0,0,0,.6); }
+.vf .center { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; transform: translate(-50%,-50%); }
+.vf .center::before, .vf .center::after { content: ""; position: absolute; background: rgba(255,255,255,.7); }
+.vf .center::before { left: 0; right: 0; top: 50%; height: 1px; }
+.vf .center::after { top: 0; bottom: 0; left: 50%; width: 1px; }
+.hist { position: absolute; top: 28px; left: 28px; width: 76px; height: 36px; display: flex; align-items: flex-end; gap: 1px; padding: 4px; background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.25); }
+.hist i { flex: 1; background: rgba(255,255,255,.85); }
+.focus { position: absolute; width: 72px; height: 72px; }
+.focus span { position: absolute; width: 10px; height: 10px; border: 0 solid var(--white); }
+.focus span:nth-child(1) { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
+.focus span:nth-child(2) { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
+.focus span:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
+.focus span:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
+.focus b { position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px; border-radius: 50%; background: var(--red); }
+.toast { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; padding: 7px 12px 6px; background: rgba(0,0,0,.72); border: 1px solid var(--line); font-size: 11px; letter-spacing: .12em; font-weight: 500; white-space: nowrap; }
+.toast i { width: 6px; height: 6px; border-radius: 50%; background: var(--red); }
+
+/* Pozlama okuma satırı */
+.readout { height: 66px; display: grid; grid-template-columns: 1.25fr 1fr 1fr .8fr; padding: 0 10px; border-bottom: 1px solid var(--line); }
+.cell { position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; gap: 2px; }
+.cell .v { font-weight: 300; font-size: 25px; line-height: 1; letter-spacing: .01em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cell .v .a { color: var(--red); font-weight: 500; font-size: 13px; margin-right: 3px; vertical-align: 8px; letter-spacing: 0; }
+.cell .k { font-size: 9.5px; letter-spacing: .18em; color: var(--grey); font-weight: 500; }
+.cell.auto .v { color: #bdbdbb; }
+.cell.dim .v, .cell.dim .k { color: var(--grey-dim); }
+.cell.sel::after { content: ""; position: absolute; bottom: -1px; left: 18%; right: 18%; height: 2px; background: var(--red); }
+
+/* Kadran */
+.dial { height: 58px; position: relative; overflow: hidden; }
+.dial .track { position: absolute; inset: 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; display: flex; padding: 0 calc(50% - 26px); cursor: grab; }
+.dial .track::-webkit-scrollbar { display: none; }
+.dial .tick { flex: 0 0 52px; scroll-snap-align: center; position: relative; height: 100%; }
+.dial .tick .lb { position: absolute; top: 10px; left: 0; right: 0; text-align: center; font-size: 11px; color: var(--grey-dim); font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; transition: color .15s; }
+.dial .tick.near .lb { color: var(--grey); }
+.dial .tick.cur .lb { color: var(--white); }
+.dial .tick .mj { position: absolute; bottom: 10px; left: 50%; width: 1px; height: 14px; background: rgba(255,255,255,.6); }
+.dial .tick .mn { position: absolute; bottom: 10px; width: 1px; height: 7px; background: rgba(255,255,255,.28); }
+.dial .tick .mn.a { left: calc(50% + 17px); } .dial .tick .mn.b { left: calc(50% - 17px); }
+.dial .needle { position: absolute; left: 50%; bottom: 6px; width: 2px; height: 22px; margin-left: -1px; background: var(--red); pointer-events: none; }
+.dial .fade { position: absolute; top: 0; bottom: 0; width: 70px; pointer-events: none; }
+.dial .fade.l { left: 0; background: linear-gradient(90deg, #000, transparent); }
+.dial .fade.r { right: 0; background: linear-gradient(-90deg, #000, transparent); }
+
+/* Alt sıra */
+.bottom { height: 108px; display: flex; align-items: center; justify-content: space-between; padding: 0 34px 10px; }
+.thumb { width: 46px; height: 46px; border: 1px solid var(--line-strong); background-size: cover; background-position: center; cursor: pointer; }
+.shutter { width: 74px; height: 74px; border-radius: 50%; border: 1.5px solid var(--white); display: grid; place-items: center; cursor: pointer; }
+.shutter i { width: 60px; height: 60px; border-radius: 50%; background: var(--white); transition: transform .08s, background .08s; }
+.shutter:active i { transform: scale(.92); background: var(--red); }
+.mode { width: 46px; height: 46px; border: 1px solid var(--line-strong); display: grid; place-items: center; font-weight: 400; font-size: 22px; cursor: pointer; position: relative; }
+.mode.m { border-color: var(--red); }
+.mode small { position: absolute; bottom: -16px; font-size: 9px; letter-spacing: .18em; color: var(--grey); font-weight: 500; }
+
+/* Menü */
+.menu { position: absolute; inset: 34px 0 0; background: var(--black); padding: 8px 0 0; display: flex; flex-direction: column; }
+.menu .head { display: flex; justify-content: space-between; align-items: center; padding: 10px 24px 18px; }
+.menu .head .caps { color: var(--grey); }
+.x { width: 18px; height: 18px; position: relative; cursor: pointer; }
+.x::before, .x::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--white); transform: rotate(45deg); }
+.x::after { transform: rotate(-45deg); }
+.menu .group { padding: 18px 24px 6px; color: var(--grey-dim); }
+.menu .row { display: flex; justify-content: space-between; align-items: baseline; padding: 15px 24px 14px; position: relative; cursor: pointer; }
+.menu .row + .row { border-top: 1px solid rgba(255,255,255,.07); }
+.menu .row .k { font-size: 18px; font-weight: 300; }
+.menu .row .v { font-size: 13px; color: var(--grey); font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+.menu .row .v.on { color: var(--white); }
+.menu .row.sel .k { font-weight: 400; }
+.menu .row.sel::after { content: ""; position: absolute; left: 24px; width: 120px; bottom: 6px; height: 1.5px; background: var(--red); }
+.menu .row.sel::before { content: ""; position: absolute; left: 11px; top: 50%; width: 4px; height: 4px; margin-top: -2px; border-radius: 50%; background: var(--white); }
+.menu .foot { margin-top: auto; padding: 18px 24px 34px; display: flex; justify-content: space-between; color: var(--grey-dim); border-top: 1px solid var(--line); }
+
+/* Zamanlayıcı */
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; height: 420px; background: var(--black); border-top: 1px solid var(--line-strong); padding: 22px 24px 30px; display: flex; flex-direction: column; }
+.sheet .title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.sheet .title .caps { color: var(--grey); }
+.pickers { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 0; flex: 1; }
+.pickers .div { background: var(--line); margin: 10px 0; }
+.picker { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: ns-resize; }
+.picker .o { font-weight: 300; font-size: 22px; color: var(--grey-dim); font-variant-numeric: tabular-nums; line-height: 1.5; }
+.picker .o.far { font-size: 16px; color: #2c2c2b; }
+.picker .c { font-weight: 300; font-size: 64px; line-height: 1.05; font-variant-numeric: tabular-nums; position: relative; }
+.picker .c::after { content: ""; position: absolute; left: 50%; bottom: -4px; width: 26px; margin-left: -13px; height: 2px; background: var(--red); }
+.picker .k { margin-top: 12px; color: var(--grey); }
+.sheet .opts { display: flex; justify-content: space-between; padding: 16px 0; border-top: 1px solid var(--line); margin-top: 12px; font-size: 13px; }
+.sheet .opts .caps { color: var(--grey); font-size: 10px; }
+.sheet .opts b { font-weight: 500; letter-spacing: .1em; font-size: 12px; }
+.btn { height: 50px; border: 1px solid var(--white); display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 12px; letter-spacing: .24em; font-weight: 500; cursor: pointer; }
+.btn i { width: 7px; height: 7px; border-radius: 50%; background: var(--red); }
+.btn:active { background: var(--white); color: #000; }
+.countdown { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.countdown .ring { width: 150px; height: 150px; border-radius: 50%; border: 1px solid rgba(255,255,255,.5); display: grid; place-items: center; position: relative; background: rgba(0,0,0,.25); }
+.countdown .ring svg { position: absolute; inset: -1px; transform: rotate(-90deg); }
+.countdown .ring b { font-weight: 300; font-size: 76px; line-height: 1; }
+.countdown .ring small { position: absolute; bottom: 26px; font-size: 10px; letter-spacing: .2em; color: var(--white); font-weight: 500; }
+
+/* ---------- Spesifikasyon ---------- */
+section.spec { margin-top: 88px; border-top: 1px solid var(--line); padding-top: 40px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 48px; }
+.spec h3 { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; font-weight: 500; margin-bottom: 20px; display: flex; gap: 10px; }
+.spec h3 span { color: var(--red); }
+.sw { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; font-size: 12px; }
+.sw i { width: 38px; height: 38px; border: 1px solid var(--line); }
+.sw div b { display: block; font-weight: 500; }
+.sw div span { color: var(--grey); font-size: 11px; font-variant-numeric: tabular-nums; }
+.type-row { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,.07); padding: 10px 0; }
+.type-row span { color: var(--grey); font-size: 11px; }
+.spec ol { list-style: none; counter-reset: c; }
+.spec ol li { counter-increment: c; font-size: 12px; line-height: 1.55; color: var(--grey); padding: 8px 0 8px 28px; position: relative; border-bottom: 1px solid rgba(255,255,255,.07); }
+.spec ol li::before { content: counter(c, decimal-leading-zero); position: absolute; left: 0; color: var(--white); font-weight: 500; font-variant-numeric: tabular-nums; }
+.spec ol li b { color: var(--white); font-weight: 500; }
+
+/* Açıklama işaretleri (poster tarzı) */
+.mk { position: absolute; width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--white); background: #000; color: var(--white); font-size: 9.5px; font-weight: 600; display: grid; place-items: center; z-index: 5; pointer-events: none; opacity: 0; transition: opacity .2s; }
+body.annot .mk { opacity: 1; }
+.toggle-annot { position: fixed; right: 24px; bottom: 24px; padding: 10px 16px; border: 1px solid var(--line-strong); background: #000; font-size: 11px; letter-spacing: .16em; cursor: pointer; text-transform: uppercase; font-weight: 500; z-index: 10; }
+body.annot .toggle-annot { border-color: var(--red); }
+</style>
+</head>
+<body>
+
+<header class="poster">
+  <div>
+    <div class="wordmark"><div class="dot">HC</div><h1>HeyCam</h1></div>
+  </div>
+  <p><b>Arayüz önerisi, v1.</b> Siyah zemin, beyaz yazı ve ince çizgiler, tek vurgu rengi olarak kırmızı. İkon yerine mümkün olduğunca metin ve sayı kullanılıyor. Pozlama değerleri ekranın merkezinde, her şey bir dokunuş uzaklıkta. Fotoğrafta bulunmayan hiçbir şey vizörü kalabalıklaştırmıyor.</p>
+  <div class="meta"><span class="caps">Tipografi</span><span class="v">Barlow · 300 / 500</span><br><br><span class="caps">Vurgu</span><span class="v" style="color:var(--red)">#E2231A</span></div>
+</header>
+
+<div class="screens" id="screens"></div>
+
+<section class="spec">
+  <div>
+    <h3><span>A</span>Renk</h3>
+    <div class="sw"><i style="background:#000"></i><div><b>Siyah</b><span>#000000 · zemin</span></div></div>
+    <div class="sw"><i style="background:#141414"></i><div><b>Mürekkep</b><span>#141414 · panel</span></div></div>
+    <div class="sw"><i style="background:#f2f2f0"></i><div><b>Beyaz</b><span>#F2F2F0 · metin, çizgi</span></div></div>
+    <div class="sw"><i style="background:#8c8c8a"></i><div><b>Gri</b><span>#8C8C8A · etiket</span></div></div>
+    <div class="sw"><i style="background:#e2231a"></i><div><b>Kırmızı</b><span>#E2231A · seçim, ibre, otomatik</span></div></div>
+  </div>
+  <div>
+    <h3><span>B</span>Tipografi</h3>
+    <div class="type-row"><span style="color:var(--white);font-weight:300;font-size:30px" class="num">1/125</span><span>Değer · Light 25–64</span></div>
+    <div class="type-row"><span style="color:var(--white);font-weight:300;font-size:18px">Shutter speed</span><span>Menü · Light 18</span></div>
+    <div class="type-row"><span style="color:var(--white)" class="caps">ISO · EV · S</span><span>Etiket · Medium 10, aralıklı</span></div>
+    <div class="type-row"><span style="color:var(--white);font-size:12px;font-weight:500;letter-spacing:.08em">DNG 1284</span><span>Şerit · Medium 12</span></div>
+  </div>
+  <div>
+    <h3><span>C</span>İlkeler</h3>
+    <ol>
+      <li><b>Kırmızı = durum.</b> Yalnızca seçili değer, kadran ibresi, otomatik bayrağı ve RAW için.</li>
+      <li><b>Sayı önce gelir.</b> Değerler büyük ve ince, etiketler küçük ve gri.</li>
+      <li><b>Köşe yok.</b> Keskin dikdörtgenler, 1 px çizgiler, gölge ve bulanıklık yok.</li>
+      <li><b>Otomatikte bile şeffaf.</b> Kameranın seçtiği S ve ISO canlı gösterilir, başında kırmızı <b>A</b> olur.</li>
+    </ol>
+  </div>
+  <div>
+    <h3><span>D</span>İşaretler</h3>
+    <ol>
+      <li><b>Menü</b> tüm ayarlara açılır</li>
+      <li><b>Format</b>: JPG/DNG, RAW'da çerçeve kırmızı</li>
+      <li><b>Durum</b>: LUT, çerçeve, zamanlayıcı, flaş</li>
+      <li><b>Kalan kare</b> ve pil</li>
+      <li><b>Vizör</b>: 3:4, köşe çizgileri, odak uzaklığı</li>
+      <li><b>Okuma satırı</b>: dokununca kadran o değere geçer</li>
+      <li><b>Kadran</b>: kaydırmalı cetvel, kırmızı ibre</li>
+      <li><b>A / M</b> mod anahtarı</li>
+    </ol>
+  </div>
+</section>
+
+<div class="toggle-annot" onclick="document.body.classList.toggle('annot')">İşaretleri göster</div>
+
+<script>
+const IMG = { road: 'assets/photo1.jpg', street: 'assets/photo3.jpg' };
+const SHUTTER = ['1"','1/2','1/4','1/8','1/15','1/30','1/60','1/125','1/250','1/500','1/1000','1/2000','1/4000'];
+const ISO = ['50','100','200','400','800','1600','3200','6400'];
+const EV = ['−2','−1⅔','−1⅓','−1','−⅔','−⅓','0','+⅓','+⅔','+1','+1⅓','+1⅔','+2'];
+const svg = {
+  flash: '<svg viewBox="0 0 16 16"><path d="M9 1.5 3.5 9h4L6.5 14.5 12.5 7h-4z"/></svg>',
+  timer: '<svg viewBox="0 0 16 16"><circle cx="8" cy="9" r="5.5"/><path d="M8 9V6M6.5 1.5h3"/></svg>',
+};
+
+function strip(s) {
+  return `<div class="strip">
+    <div class="menu-btn" data-act="menu"><i></i><i></i></div>
+    <span class="fmt ${s.raw ? 'raw' : ''}" data-act="fmt">${s.raw ? 'DNG' : 'JPG'}</span>
+    <span class="it ${s.lut && !s.raw ? 'on' : ''}">${s.lut && !s.raw ? s.lut : 'LUT'}</span>
+    <span class="it ${s.timer ? 'on' : ''}" data-act="timer">${svg.timer}${s.timer ? s.timer + 's' : ''}</span>
+    <span class="it ${s.flash ? 'on' : ''}" data-act="flash">${svg.flash}${s.flash ? 'ON' : ''}</span>
+    <span class="sp"></span>
+    <span class="count num">${s.raw ? '412' : '1 284'}</span>
+    <span class="batt"><i></i></span>
+  </div>`;
+}
+
+function hist() {
+  const h = [2,3,5,8,12,18,24,30,34,30,26,22,20,24,30,36,40,34,26,18,12,8,6,10,14,8,4,2];
+  return `<div class="hist">${h.map(v => `<i style="height:${v / 40 * 100}%"></i>`).join('')}</div>`;
+}
+
+function vf(s, inner = '') {
+  return `<div class="vf">
+    <div class="img" style="background-image:url(${s.img}); ${s.raw ? 'filter:saturate(.75) contrast(.88) brightness(1.04)' : ''}"></div>
+    <div class="bracket tl"></div><div class="bracket tr"></div><div class="bracket bl"></div><div class="bracket br"></div>
+    ${s.hist ? hist() : ''}
+    ${s.focus ? `<div class="focus" style="left:${s.focus[0]}px;top:${s.focus[1]}px"><span></span><span></span><span></span><span></span><b></b></div>` : '<div class="center"></div>'}
+    ${s.toast ? `<div class="toast"><i></i>${s.toast}</div>` : ''}
+    <div class="focal num">26</div>
+    ${inner}
+  </div>`;
+}
+
+function readout(s) {
+  const auto = !s.manual;
+  const cells = [
+    { id: 'S', v: SHUTTER[s.si], k: 'S', auto },
+    { id: 'ISO', v: ISO[s.ii], k: 'ISO', auto },
+    { id: 'EV', v: s.manual ? '—' : EV[s.ei], k: 'EV', dim: s.manual },
+    { id: 'F', v: '1.8', k: 'F', dim: true },
+  ];
+  return `<div class="readout">${cells.map(c => `
+    <div class="cell ${c.auto ? 'auto' : ''} ${c.dim ? 'dim' : ''} ${s.dial === c.id ? 'sel' : ''}" data-cell="${c.id}">
+      <div class="v">${c.auto ? '<span class="a">A</span>' : ''}${c.v}</div><div class="k">${c.k}</div>
+    </div>`).join('')}</div>`;
+}
+
+function dial(s) {
+  const vals = s.dial === 'S' ? SHUTTER : s.dial === 'ISO' ? ISO : EV;
+  return `<div class="dial"><div class="track">${vals.map((v, i) =>
+    `<div class="tick" data-i="${i}"><div class="lb">${v}</div><div class="mn b"></div><div class="mj"></div><div class="mn a"></div></div>`).join('')}</div>
+    <div class="fade l"></div><div class="fade r"></div><div class="needle"></div></div>`;
+}
+
+function bottom(s) {
+  return `<div class="bottom">
+    <div class="thumb" style="background-image:url(${IMG.street}); filter:grayscale(.2)"></div>
+    <div class="shutter" data-act="shoot"><i></i></div>
+    <div class="mode ${s.manual ? 'm' : ''}" data-act="mode">${s.manual ? 'M' : 'A'}</div>
+  </div>`;
+}
+
+const marks = [[18,92],[50,92],[110,92],[290,92],[30,130],[30,594],[30,668],[316,708]];
+function markers(on) {
+  return on ? marks.map((p, i) => `<div class="mk" style="left:${p[0] - 9}px;top:${p[1] - 9}px">${i + 1}</div>`).join('') : '';
+}
+
+function camera(s) {
+  return `<div class="statusbar"><span class="num">18:24</span><span class="cam"></span><span class="num">87%</span></div>
+    ${strip(s)}${vf(s, s.countdown ? countdown(s) : '')}${readout(s)}${dial(s)}${bottom(s)}
+    ${s.menu ? menu(s) : ''}${s.sheet ? sheet(s) : ''}
+    <div class="navbar"></div>${markers(s.marks)}`;
+}
+
+function menu(s) {
+  const rows = [
+    ['g', 'Capture'],
+    ['File format', s.raw ? 'DNG' : 'JPG', true],
+    ['JPEG processing', 'Minimal', true, true],
+    ['Flash', s.flash ? 'On' : 'Off'],
+    ['Interval timer', '3 s × 5', true],
+    ['g', 'Look'],
+    ['LUT', 'Tokyo', true],
+    ['Frame', 'None'],
+    ['Grid', 'Off'],
+    ['g', 'System'],
+    ['Sound', 'On', true],
+    ['Glyph matrix', 'On', true],
+  ];
+  return `<div class="menu">
+    <div class="head"><span class="caps">Main menu</span><div class="x" data-act="menu"></div></div>
+    ${rows.map(r => r[0] === 'g' ? `<div class="group caps">${r[1]}</div>` :
+      `<div class="row ${r[3] ? 'sel' : ''}"><span class="k">${r[0]}</span><span class="v ${r[2] ? 'on' : ''}">${r[1]}</span></div>`).join('')}
+    <div class="foot caps"><span>HeyCam 0.3</span><span>Camera 0 · 26 mm · f/1.8</span></div>
+  </div>`;
+}
+
+function sheet(s) {
+  const col = (vals, i, k) => `<div class="picker">
+    <div class="o far num">${vals[i - 2] ?? ''}</div><div class="o num">${vals[i - 1] ?? ''}</div>
+    <div class="c num">${vals[i]}</div>
+    <div class="o num">${vals[i + 1] ?? ''}</div><div class="o far num">${vals[i + 2] ?? ''}</div>
+    <div class="k caps">${k}</div></div>`;
+  const n = [...Array(10)].map((_, i) => String(i + 1));
+  return `<div class="sheet">
+    <div class="title"><span class="caps">Interval timer</span><div class="x" data-act="sheet"></div></div>
+    <div class="pickers">${col(n, 2, 'Seconds')}<div class="div"></div>${col(n, 4, 'Shots')}</div>
+    <div class="opts"><span class="caps">Sound</span><b>ON</b><span class="caps">Glyph</span><b>ON</b><span class="caps">Total</span><b class="num">15 s</b></div>
+    <div class="btn"><i></i>START</div>
+  </div>`;
+}
+
+function countdown() {
+  const c = 2 * Math.PI * 75;
+  return `<div class="countdown"><div class="ring">
+    <svg width="152" height="152"><circle cx="76" cy="76" r="75" fill="none" stroke="#e2231a" stroke-width="2" stroke-dasharray="${c}" stroke-dashoffset="${c * .66}"/></svg>
+    <b class="num">2</b><small class="num">3 / 5</small></div></div>`;
+}
+
+// ---------- Ekranlar ----------
+const screens = [
+  { n: '01', t: 'Otomatik · JPG', d: 'Pozlamayı kamera seçer, ama seçtiği S ve ISO değerleri kırmızı <b>A</b> ile canlı gösterilir. Kadran pozlama telafisini (EV) ayarlar. Değerlere dokunarak kadranı değiştir, sürükleyerek ayarla.',
+    s: { img: IMG.road, manual: false, raw: false, si: 7, ii: 2, ei: 7, dial: 'EV', lut: 'TOKYO', hist: true, marks: true } },
+  { n: '02', t: 'Manuel · DNG', d: 'Pozlamayı S ve ISO belirler. RAW seçiliyken format çerçevesi kırmızı olur, LUT ve çerçeve devre dışı kalır. Odak karesi dokunulan noktada görünür.',
+    s: { img: IMG.street, manual: true, raw: true, si: 9, ii: 1, ei: 6, dial: 'S', focus: [150, 300], toast: 'DNG SAVED · 23.8 MB' } },
+  { n: '03', t: 'Menü', d: 'Ayarlar tek bir sade listede toplanıyor. Yeni bir satır var: <b>JPEG processing</b>. JPEG için gürültü azaltma ve keskinleştirme burada <i>Minimal</i> ya da <i>Off</i> yapılabiliyor.',
+    s: { img: IMG.road, manual: false, raw: false, si: 7, ii: 2, ei: 6, dial: 'EV', menu: true } },
+  { n: '04', t: 'Aralıklı çekim', d: 'Büyük, ince rakamlar ve tek kırmızı vurgu. Ses ve Glyph Matrix ayarları aynı panelde. Toplam süre önceden hesaplanıp gösterilir.',
+    s: { img: IMG.street, manual: true, raw: false, si: 6, ii: 3, ei: 6, dial: 'S', sheet: true, timer: 3 } },
+  { n: '05', t: 'Geri sayım', d: 'START sonrası: vizörün ortasında ince bir halka, kırmızı ilerleme yayı ve kare sayacı. Arayüzün geri kalanı yerinde kalır, çekim istenirse iptal edilebilir.',
+    s: { img: IMG.road, manual: false, raw: false, si: 8, ii: 1, ei: 6, dial: 'EV', timer: 3, countdown: true } },
+];
+
+const root = document.getElementById('screens');
+screens.forEach((sc, idx) => {
+  const col = document.createElement('div');
+  col.className = 'screen-col';
+  col.innerHTML = `<div class="label"><span class="n">${sc.n}</span><span class="t">${sc.t}</span></div><div class="phone" lang="en" id="p${idx}"></div><div class="desc">${sc.d}</div>`;
+  root.appendChild(col);
+  render(idx);
+});
+
+function fit() {
+  const el = document.getElementById('screens');
+  const need = 5 * 360 + 4 * 40 + 40, avail = window.innerWidth - 128;
+  el.style.zoom = avail < need && avail / need > .68 ? (avail / need).toFixed(3) : 1;
+}
+fit(); window.addEventListener('resize', fit);
+
+function keyFor(s) { return s.dial === 'S' ? 'si' : s.dial === 'ISO' ? 'ii' : 'ei'; }
+
+function render(idx) {
+  const s = screens[idx].s;
+  const el = document.getElementById('p' + idx);
+  el.innerHTML = camera(s);
+  const track = el.querySelector('.track');
+  const ticks = [...track.children];
+  const setCur = i => ticks.forEach((t, j) => { t.classList.toggle('cur', j === i); t.classList.toggle('near', Math.abs(j - i) === 1); });
+  const cur = s[keyFor(s)];
+  track.scrollLeft = cur * 52;
+  setCur(cur);
+  let raf;
+  track.addEventListener('scroll', () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const i = Math.max(0, Math.min(ticks.length - 1, Math.round(track.scrollLeft / 52)));
+      setCur(i);
+      if (s.dial === 'EV' && s.manual) return;
+      s[keyFor(s)] = i;
+      const sel = el.querySelector('.cell.sel .v');
+      if (sel) sel.innerHTML = (s.manual || s.dial === 'EV' ? '' : '<span class="a">A</span>') + (s.dial === 'S' ? SHUTTER : s.dial === 'ISO' ? ISO : EV)[i];
+    });
+  });
+  // Fareyle sürükleme
+  let dx = null, sl = 0;
+  track.addEventListener('pointerdown', e => { dx = e.clientX; sl = track.scrollLeft; track.style.scrollSnapType = 'none'; track.setPointerCapture(e.pointerId); });
+  track.addEventListener('pointermove', e => { if (dx !== null) track.scrollLeft = sl - (e.clientX - dx); });
+  const end = () => { if (dx === null) return; dx = null; const i = Math.round(track.scrollLeft / 52); track.style.scrollSnapType = ''; track.scrollTo({ left: i * 52, behavior: 'smooth' }); };
+  track.addEventListener('pointerup', end); track.addEventListener('pointercancel', end);
+
+  el.querySelectorAll('[data-cell]').forEach(c => c.addEventListener('click', () => {
+    const id = c.dataset.cell;
+    if (id === 'F') return;
+    if (!s.manual && id !== 'EV') return;       // otomatikte S/ISO kameraya ait
+    if (s.manual && id === 'EV') return;        // manuelde EV yok
+    s.dial = id; render(idx);
+  }));
+  el.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => {
+    const a = b.dataset.act;
+    if (a === 'mode') { s.manual = !s.manual; s.dial = s.manual ? 'S' : 'EV'; }
+    if (a === 'fmt') s.raw = !s.raw;
+    if (a === 'flash') s.flash = !s.flash;
+    if (a === 'menu') s.menu = !s.menu;
+    if (a === 'sheet') { s.sheet = false; s.countdown = false; }
+    if (a === 'timer') s.sheet = !s.sheet;
+    if (a === 'shoot') {
+      s.toast = s.raw ? 'DNG SAVED · 23.8 MB' : 'JPG SAVED · 6.1 MB';
+      render(idx);
+      const f = document.createElement('div');
+      f.style.cssText = 'position:absolute;inset:78px 0 auto;height:480px;background:#000;opacity:1;transition:opacity .18s;pointer-events:none';
+      el.appendChild(f); requestAnimationFrame(() => requestAnimationFrame(() => f.style.opacity = 0));
+      setTimeout(() => f.remove(), 250);
+      return;
+    }
+    render(idx);
+  }));
+}
+</script>
+</body>
+</html>

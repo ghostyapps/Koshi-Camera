@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108" role="img" aria-label="KOSHI — L5 / Kesitte ışık">
+<path d="M48 22Q-1 54 48 86Q97 54 48 22Z" fill="none" stroke="#F2F2F0" stroke-width="1.8" stroke-linejoin="round"/>
+<g transform="translate(48 51) scale(0.54) translate(-54 -54)">
+<path d="M52 26V43 M31 29L39 38 M73 29L65 38 M27 49H79 M45 49C45 63 38 73 27 79 M60 49V72Q60 77 65 77H69V68" fill="none" stroke="#F2F2F0" stroke-width="10.741" stroke-linecap="square" stroke-linejoin="round"/>
+</g>
+<path d="M73 54H77" fill="none" stroke="#F2F2F0" stroke-width="1.2"/>
+<circle cx="82" cy="54" r="4" fill="#F2F2F0"/>
+</svg>
