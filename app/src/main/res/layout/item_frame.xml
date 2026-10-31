@@ -1,26 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:layout_margin="8dp"
-    app:cardBackgroundColor="#222222"
-    app:cardCornerRadius="12dp">
+    android:layout_height="wrap_content"
+    android:padding="6dp">
 
-    <ImageView
-        android:id="@+id/img_frame_thumb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp"/>
+    <FrameLayout
+        android:id="@+id/tile"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/hc_box"
+        app:layout_constraintDimensionRatio="H,3:4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Seçili olduğunu gösteren renkli kenarlık -->
-    <View
-        android:id="@+id/view_selection_border"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/bg_frame_selected"
-        android:visibility="gone"/>
+        <ImageView
+            android:id="@+id/img_frame_thumb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp" />
 
-    <!-- SİLME BUTONU KALDIRILDI -->
+        <!-- Selected state: red border and dot -->
+        <View
+            android:id="@+id/view_selection_border"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/hc_frame_selected"
+            android:visibility="gone" />
 
-</androidx.cardview.widget.CardView>
+        <View
+            android:id="@+id/view_selection_dot"
+            android:layout_width="7dp"
+            android:layout_height="7dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="9dp"
+            android:background="@drawable/hc_dot_red"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/txt_frame_name"
+        style="@style/HC.Caps"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="9dp"
+        android:layout_marginBottom="10dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tile" />
+</androidx.constraintlayout.widget.ConstraintLayout>

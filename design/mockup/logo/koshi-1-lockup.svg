@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 144" role="img" aria-label="KOSHI 光子 — Odak tanesi">
+<rect width="640" height="144" fill="#000000"/>
+<g transform="translate(8 18)"><g fill="none" stroke="#F2F2F0" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter"><path d="M42 26H26V42 M66 26H82V42 M26 66V82H42 M66 82H82V66"/><circle cx="54" cy="54" r="5" fill="#E2231A" stroke="none"/></g></g>
+<text x="146" y="87" fill="#F2F2F0" font-family="Barlow,sans-serif" font-weight="500" font-size="52" letter-spacing="10">KOSHI</text>
+<text x="480" y="82" fill="#F2F2F0" font-family="'Hiragino Sans','Noto Sans JP',sans-serif" font-size="23" letter-spacing="4">光子</text>
+</svg>

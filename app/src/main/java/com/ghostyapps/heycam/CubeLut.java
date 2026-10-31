@@ -1,113 +1,126 @@
 package com.ghostyapps.heycam;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+/**
+ * 3D LUT in Adobe .cube format, applied with trilinear interpolation.
+ * (Nearest-neighbour lookup would quantize every channel to the LUT size, e.g. 33 levels,
+ * which bands smooth gradients like skies.)
+ */
 public class CubeLut {
 
-    private int lutSize;
-    private int[] lutData; // RGB verilerini tek boyutlu dizide tutacağız (Hız için)
-    private boolean isLoaded = false;
+    private int size;
+    /** RGB triplets in 0..1, red changing fastest, as stored in the file. */
+    private float[] table;
 
-    // Dosyayı yükleyip Parse eden metod
     public boolean load(File cubeFile) {
         if (!cubeFile.exists()) return false;
-
         try (BufferedReader br = new BufferedReader(new FileReader(cubeFile))) {
             String line;
-            int dataIndex = 0;
-
+            int i = 0;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
-                if (line.isEmpty() || line.startsWith("#")) continue; // Yorumları atla
-
-                if (line.startsWith("LUT_3D_SIZE")) {
-                    String[] parts = line.split("\\s+");
-                    lutSize = Integer.parseInt(parts[parts.length - 1]);
-                    // Cube boyutu: Size * Size * Size * 3 (RGB) yok ama biz int color tutacağız
-                    lutData = new int[lutSize * lutSize * lutSize];
-                    continue;
-                }
-
-                if (line.startsWith("TITLE") || line.startsWith("DOMAIN")) continue;
-
-                // Veri satırları (R G B)
-                // Örnek: 0.000000 0.125000 0.500000
-                if (lutData != null && dataIndex < lutData.length) {
-                    String[] parts = line.split("\\s+");
-                    if (parts.length >= 3) {
-                        float r = Float.parseFloat(parts[0]);
-                        float g = Float.parseFloat(parts[1]);
-                        float b = Float.parseFloat(parts[2]);
-
-                        // 0.0 - 1.0 aralığını 0 - 255 aralığına çek
-                        int ir = (int) (r * 255);
-                        int ig = (int) (g * 255);
-                        int ib = (int) (b * 255);
-
-                        // Clamp (Taşmaları önle)
-                        ir = Math.min(255, Math.max(0, ir));
-                        ig = Math.min(255, Math.max(0, ig));
-                        ib = Math.min(255, Math.max(0, ib));
-
-                        lutData[dataIndex++] = Color.rgb(ir, ig, ib);
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                char c0 = line.charAt(0);
+                if (Character.isLetter(c0)) {
+                    if (line.startsWith("LUT_3D_SIZE")) {
+                        String[] parts = line.split("\\s+");
+                        size = Integer.parseInt(parts[parts.length - 1]);
+                        table = new float[size * size * size * 3];
+                    } else if (line.startsWith("LUT_1D_SIZE")) {
+                        return false;
                     }
+                    continue; // TITLE, DOMAIN_MIN/MAX, ...
                 }
+                if (table == null || i + 3 > table.length) continue;
+                if (parseTriplet(line, table, i)) i += 3;
             }
-            isLoaded = true;
-            return true;
-
+            return table != null && i == table.length;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    // Bitmap'e LUT uygulayan metod
-    public Bitmap apply(Bitmap src) {
-        if (!isLoaded || lutData == null) return src;
-
-        int width = src.getWidth();
-        int height = src.getHeight();
-        int[] pixels = new int[width * height];
-
-        // 1. Tüm pikselleri diziye al
-        src.getPixels(pixels, 0, width, 0, 0, width, height);
-
-        // 2. Her pikseli dönüştür
-        // NOT: Performans için Trilinear Interpolation yerine Nearest Neighbor kullanıyoruz.
-        // Fotoğraf çözünürlüğü yüksek olduğu için gözle fark edilmesi zordur.
-
-        float scale = (lutSize - 1) / 255f;
-
-        for (int i = 0; i < pixels.length; i++) {
-            int color = pixels[i];
-            int r = (color >> 16) & 0xFF;
-            int g = (color >> 8) & 0xFF;
-            int b = color & 0xFF;
-
-            // RGB değerini LUT koordinatına çevir
-            int lr = Math.round(r * scale);
-            int lg = Math.round(g * scale);
-            int lb = Math.round(b * scale);
-
-            // 3D Dizideki karşılığını bul: Index = r + g*size + b*size*size
-            // Standart .cube formatında sıralama genelde R değişir, sonra G, sonra B
-            int index = lr + (lg * lutSize) + (lb * lutSize * lutSize);
-
-            if (index >= 0 && index < lutData.length) {
-                pixels[i] = lutData[index];
-            }
+    /** Parses "r g b" into dst[at..at+2] without regex; returns false for malformed lines. */
+    private static boolean parseTriplet(String line, float[] dst, int at) {
+        int n = line.length(), pos = 0;
+        for (int k = 0; k < 3; k++) {
+            while (pos < n && Character.isWhitespace(line.charAt(pos))) pos++;
+            int start = pos;
+            while (pos < n && !Character.isWhitespace(line.charAt(pos))) pos++;
+            if (start == pos) return false;
+            dst[at + k] = Float.parseFloat(line.substring(start, pos));
         }
+        return true;
+    }
 
-        // 3. Yeni pikselleri bitmap'e yaz (Mutable olması lazım)
-        // Orijinal bitmap'i bozmamak için kopyası üzerinde çalışmak daha iyidir ama bellek sorunu olabilir.
-        // Şimdilik kaynak üzerine yazıyoruz (src mutable olmalı).
-        src.setPixels(pixels, 0, width, 0, 0, width, height);
-        return src;
+    /** Applies the LUT in place; {@code bmp} must be mutable. */
+    public Bitmap apply(Bitmap bmp) {
+        if (table == null) return bmp;
+        final int w = bmp.getWidth(), h = bmp.getHeight();
+        int threads = Math.max(1, Math.min(4, Runtime.getRuntime().availableProcessors()));
+        ExecutorService pool = Executors.newFixedThreadPool(threads);
+        try {
+            List<Future<?>> jobs = new ArrayList<>();
+            int band = (h + threads - 1) / threads;
+            for (int t = 0; t < threads; t++) {
+                final int y0 = t * band, y1 = Math.min(h, y0 + band);
+                if (y0 >= y1) break;
+                jobs.add(pool.submit(() -> {
+                    int[] row = new int[w];
+                    for (int y = y0; y < y1; y++) {
+                        bmp.getPixels(row, 0, w, 0, y, w, 1);
+                        for (int x = 0; x < w; x++) row[x] = map(row[x]);
+                        bmp.setPixels(row, 0, w, 0, y, w, 1);
+                    }
+                }));
+            }
+            for (Future<?> f : jobs) f.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.shutdown();
+        }
+        return bmp;
+    }
+
+    private int map(int argb) {
+        final int n = size, n1 = n - 1;
+        final float[] t = table;
+        float r = ((argb >> 16) & 0xFF) * n1 / 255f;
+        float g = ((argb >> 8) & 0xFF) * n1 / 255f;
+        float b = (argb & 0xFF) * n1 / 255f;
+        int r0 = (int) r, g0 = (int) g, b0 = (int) b;
+        int r1 = Math.min(r0 + 1, n1), g1 = Math.min(g0 + 1, n1), b1 = Math.min(b0 + 1, n1);
+        float fr = r - r0, fg = g - g0, fb = b - b0;
+
+        int i000 = 3 * (r0 + n * (g0 + n * b0)), i100 = 3 * (r1 + n * (g0 + n * b0));
+        int i010 = 3 * (r0 + n * (g1 + n * b0)), i110 = 3 * (r1 + n * (g1 + n * b0));
+        int i001 = 3 * (r0 + n * (g0 + n * b1)), i101 = 3 * (r1 + n * (g0 + n * b1));
+        int i011 = 3 * (r0 + n * (g1 + n * b1)), i111 = 3 * (r1 + n * (g1 + n * b1));
+
+        int out = argb & 0xFF000000;
+        for (int c = 0; c < 3; c++) {
+            float c00 = t[i000 + c] + (t[i100 + c] - t[i000 + c]) * fr;
+            float c10 = t[i010 + c] + (t[i110 + c] - t[i010 + c]) * fr;
+            float c01 = t[i001 + c] + (t[i101 + c] - t[i001 + c]) * fr;
+            float c11 = t[i011 + c] + (t[i111 + c] - t[i011 + c]) * fr;
+            float c0 = c00 + (c10 - c00) * fg;
+            float c1 = c01 + (c11 - c01) * fg;
+            int v = Math.round((c0 + (c1 - c0) * fb) * 255f);
+            v = v < 0 ? 0 : Math.min(v, 255);
+            out |= v << (16 - 8 * c);
+        }
+        return out;
     }
 }

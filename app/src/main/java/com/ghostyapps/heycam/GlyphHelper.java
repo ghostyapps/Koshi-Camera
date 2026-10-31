@@ -15,6 +15,7 @@ public class GlyphHelper {
 
     private GlyphMatrixManager mGM;
     private boolean isConnected = false;
+    private boolean isConnecting = false;
     private Context mContext;
 
     // Güvenlik Bayrağı
@@ -43,6 +44,7 @@ public class GlyphHelper {
                 @Override
                 public void onServiceConnected(ComponentName componentName) {
                     isConnected = true;
+                    isConnecting = false;
                     try {
                         mGM.register(Glyph.DEVICE_23112);
                         Log.d("GlyphHelper", "Connection Established");
@@ -59,10 +61,14 @@ public class GlyphHelper {
                 @Override
                 public void onServiceDisconnected(ComponentName componentName) {
                     isConnected = false;
+                    isConnecting = false;
                 }
             };
 
             if (!isConnected) {
+                // A bind is already in flight; a second init would leak a service connection.
+                if (isConnecting) return;
+                isConnecting = true;
                 mGM.init(mCallback);
             } else {
                 try { mGM.register(Glyph.DEVICE_23112); } catch (Exception e) {}
@@ -88,6 +94,7 @@ public class GlyphHelper {
         }
         mGM = null;
         isConnected = false;
+        isConnecting = false;
         Log.d("GlyphHelper", "State Reset");
     }
 
@@ -126,7 +133,7 @@ public class GlyphHelper {
                     }
                 }
             }
-            mGM.setMatrixFrame(frameData);
+            mGM.setAppMatrixFrame(frameData);
 
         } catch (Exception e) { e.printStackTrace(); }
     }
@@ -182,7 +189,7 @@ public class GlyphHelper {
                     }
                 }
             }
-            mGM.setMatrixFrame(frameData);
+            mGM.setAppMatrixFrame(frameData);
             Log.d("GlyphHelper", "Custom Pattern Sent!");
 
         } catch (Exception e) { e.printStackTrace(); }
@@ -193,7 +200,7 @@ public class GlyphHelper {
         if (mGM != null) {
             try {
                 int[] empty = new int[625];
-                mGM.setMatrixFrame(empty);
+                mGM.setAppMatrixFrame(empty);
             } catch (Exception e) {}
         }
     }
@@ -206,6 +213,7 @@ public class GlyphHelper {
                 mGM.unInit();
                 mGM = null;
                 isConnected = false;
+                isConnecting = false;
             }
         } catch (Exception e) {}
     }

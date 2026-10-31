@@ -5,8 +5,9 @@
     <uses-sdk tools:overrideLibrary="com.nothing.ketchum" />
     <!-- İZİNLER -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Only needed to write into Pictures/ on Android 9; MediaStore needs no permission from 10 on. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
     <!-- Nothing Phone izni (Kütüphane eklenirse lazım olur) -->
     <!-- NOTHING MATRIX İZNİ (Bunu kontrol et!) -->
     <uses-permission android:name="com.nothing.ketchum.permission.ENABLE" />
@@ -29,7 +30,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="${appLabel}"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HeyCam">
@@ -38,7 +39,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="${appLabel}"
             android:screenOrientation="portrait"  android:theme="@style/Theme.HeyCam">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,13 +52,13 @@
         <activity
             android:name=".LutManagerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+            android:theme="@style/Theme.HeyCam" />
 
         <!-- FRAME YÖNETİCİSİ -->
         <activity
             android:name=".FrameManagerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+            android:theme="@style/Theme.HeyCam" />
 
 
     </application>

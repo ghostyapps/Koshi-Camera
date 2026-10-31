@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Rendered to screenshots/screens.png (1800×900) by design/readme/render.sh -->
+<style>
+@font-face { font-family: Barlow; font-weight: 500; src: url(../mockup/assets/Barlow-Medium.ttf); }
+@font-face { font-family: Barlow; font-weight: 300; src: url(../mockup/assets/Barlow-Light.ttf); }
+* { margin: 0; box-sizing: border-box; }
+html, body { width: 1800px; height: 900px; background: #000; color: #f2f2f0; font-family: Barlow, sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; }
+.row { position: absolute; inset: 56px 70px 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 34px; }
+figure { display: flex; flex-direction: column; align-items: center; }
+.phone { width: 100%; aspect-ratio: 1260 / 2800; border-radius: 34px; overflow: hidden; border: 1px solid #2a2a2a; }
+.phone img { width: 100%; height: 100%; object-fit: cover; display: block; }
+figcaption { margin-top: 22px; text-align: center; }
+figcaption b { display: block; font-weight: 500; font-size: 14px; letter-spacing: .22em; text-transform: uppercase; }
+figcaption span { display: block; margin-top: 6px; font-weight: 300; font-size: 15px; color: #8c8c8a; }
+figcaption b::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #e2231a; margin-right: 10px; vertical-align: 3px; }
+</style>
+</head>
+<body>
+<div class="row">
+  <figure><div class="phone"><img src="raw/01-auto.png" alt=""></div><figcaption><b>Auto</b><span>Live S and ISO, marked A</span></figcaption></figure>
+  <figure><div class="phone"><img src="raw/02-manual.png" alt=""></div><figcaption><b>Manual</b><span>Third-stop ruler dial</span></figcaption></figure>
+  <figure><div class="phone"><img src="raw/03-focus.png" alt=""></div><figcaption><b>Manual focus</b><span>2.5× focus aid</span></figcaption></figure>
+  <figure><div class="phone"><img src="raw/04-menu.png" alt=""></div><figcaption><b>Menu</b><span>JPEG processing control</span></figcaption></figure>
+  <figure><div class="phone"><img src="raw/05-timer.png" alt=""></div><figcaption><b>Interval</b><span>Timer and Glyph Matrix</span></figcaption></figure>
+</div>
+</body>
+</html>

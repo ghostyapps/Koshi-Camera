@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108" role="img" aria-label="KOSHI — L4 / Ön halka yazısı">
+<rect width="108" height="108" fill="#E2231A"/>
+<circle cx="54" cy="54" r="32.5" fill="#000000"/>
+<circle cx="54" cy="54" r="26.5" fill="none" stroke="#8C8C8A" stroke-width="0.65"/>
+<g fill="#F2F2F0" font-family="Arial, Hiragino Sans, sans-serif" font-size="3.1" text-anchor="middle" aria-label="KOSHI  光子  1:1.7/23">
+<text x="27.536" y="41.660" transform="rotate(-65 27.536 41.660)">K</text>
+<text x="29.792" y="37.672" transform="rotate(-56 29.792 37.672)">O</text>
+<text x="32.644" y="34.086" transform="rotate(-47 32.644 34.086)">S</text>
+<text x="36.023" y="30.990" transform="rotate(-38 36.023 30.990)">H</text>
+<text x="39.844" y="28.461" transform="rotate(-29 39.844 28.461)">I</text>
+<text x="52.981" y="24.818" transform="rotate(-2 52.981 24.818)">光</text>
+<text x="57.559" y="25.018" transform="rotate(7 57.559 25.018)">子</text>
+<text x="70.328" y="29.792" transform="rotate(34 70.328 29.792)">1</text>
+<text x="73.914" y="32.644" transform="rotate(43 73.914 32.644)">:</text>
+<text x="77.010" y="36.023" transform="rotate(52 77.010 36.023)">1</text>
+<text x="79.539" y="39.844" transform="rotate(61 79.539 39.844)">.</text>
+<text x="81.439" y="44.013" transform="rotate(70 81.439 44.013)">7</text>
+<text x="82.664" y="48.428" transform="rotate(79 82.664 48.428)">/</text>
+<text x="83.182" y="52.981" transform="rotate(88 83.182 52.981)">2</text>
+<text x="82.982" y="57.559" transform="rotate(97 82.982 57.559)">3</text>
+</g>
+<g transform="translate(54 53) scale(0.54) translate(-54 -54)">
+<path d="M52 26V43 M31 29L39 38 M73 29L65 38 M27 49H79 M45 49C45 63 38 73 27 79 M60 49V72Q60 77 65 77H69V68" fill="none" stroke="#F2F2F0" stroke-width="10.741" stroke-linecap="square" stroke-linejoin="round"/>
+<circle cx="81" cy="81" r="4.8" fill="#E2231A"/>
+</g>
+</svg>

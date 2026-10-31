@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>KOSHI — 4. tur</title>
+<style>
+@font-face { font-family: Barlow; font-weight: 300; src: url(../assets/Barlow-Light.ttf); }
+@font-face { font-family: Barlow; font-weight: 500; src: url(../assets/Barlow-Medium.ttf); }
+:root { --line: rgba(255,255,255,.16); --white: #f2f2f0; --grey: #8c8c8a; --red: #e2231a; }
+* { box-sizing: border-box; margin: 0; }
+body { background: #000; color: var(--white); font-family: Barlow, sans-serif; padding: 56px 64px 96px; -webkit-font-smoothing: antialiased; }
+main, header { max-width: 1264px; margin: auto; }
+header { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 40px; }
+.caps { font-size: 10px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--grey); }
+h1 { font-weight: 300; font-size: 44px; margin: 12px 0 14px; }
+p { color: var(--grey); font-size: 14px; line-height: 1.6; max-width: 720px; }
+a { color: var(--white); font-size: 13px; text-underline-offset: 5px; }
+.jp { font-family: "Hiragino Sans", "Noto Sans JP", sans-serif; }
+.top { display: grid; grid-template-columns: 420px 1fr; gap: 48px; align-items: start; }
+.phone { width: 420px; border-radius: 36px; background: #1d1f22; padding: 28px 22px 22px; border: 1px solid #2c2c2c; }
+.phone .bar { display: flex; justify-content: space-between; margin-bottom: 22px; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); row-gap: 22px; justify-items: center; }
+.app { display: flex; flex-direction: column; align-items: center; gap: 7px; font-size: 11px; color: #9a9a98; }
+.app i { width: 58px; height: 58px; border-radius: 50%; background: #5a5c60; display: block; }
+.app img { width: 58px; height: 58px; border-radius: 50%; }
+.app.k { color: var(--white); }
+.variants { display: grid; gap: 28px; }
+.v { border-top: 1px solid var(--line); padding-top: 22px; display: grid; grid-template-columns: 200px 1fr; gap: 24px; }
+.v h2 { font-weight: 300; font-size: 26px; margin: 4px 0 8px; }
+.v h2 span { color: var(--grey); font-size: 13px; margin-right: 10px; }
+.row { display: flex; align-items: flex-end; gap: 22px; flex-wrap: wrap; padding: 18px 20px; }
+.row.black { border: 1px solid var(--line); }
+.row.wall { background: #3a3a3a; }
+.row.teal { background: #243e40; }
+.row img.c { border-radius: 50%; }
+.row img.s { border-radius: 24%; }
+.lockup { display: flex; align-items: center; gap: 26px; padding: 24px 20px; border: 1px solid var(--line); }
+.lockup img { width: 96px; height: 96px; border-radius: 50%; }
+.wm { font-weight: 500; font-size: 44px; letter-spacing: .34em; }
+.rule { width: 1px; height: 40px; background: var(--line); }
+.wmjp { font-size: 22px; color: var(--grey); letter-spacing: .12em; }
+</style>
+</head>
+<body>
+<header>
+  <span class="caps" lang="en">Optical studies / round 04</span>
+  <h1><span lang="en">KOSHI</span> — 4. tur · ortalanmış mercek</h1>
+  <p>L3'ün siyah objektifi ile L6'nın ışık yayı birleşti. Karakter artık çemberin tam merkezinde: M1 noktasız, M2 noktayı çengelin ardına, M3 son çizginin ucuna koyuyor. Işık yayı karaktere değmeyecek kadar dışarıda.</p>
+  <p style="margin-top:12px"><a href="round3.html">← 3. tur</a></p>
+</header>
+<main>
+  <div class="top">
+    <div class="phone">
+      <div class="bar caps"><span>09:41</span><span lang="en">Home</span></div>
+      <div class="grid">
+        <div class="app k"><img src="koshi-L3-icon.svg" alt=""><span>L3</span></div>
+        <div class="app"><i></i><span>Uygulama</span></div>
+        <div class="app"><i></i><span>Uygulama</span></div>
+        <div class="app"><i></i><span>Uygulama</span></div>
+        <div class="app"><i></i><span>Uygulama</span></div>
+        <div class="app k"><img src="koshi-M1-icon.svg" alt=""><span>Koshi · M1</span></div>
+        <div class="app"><i></i><span>Uygulama</span></div>
+        <div class="app"><i></i><span>Uygulama</span></div>
+        <div class="app"><i></i><span>Uygulama</span></div>
+        <div class="app"><i></i><span>Uygulama</span></div>
+        <div class="app k"><img src="koshi-M2-icon.svg" alt=""><span>Koshi · M2</span></div>
+        <div class="app"><i></i><span>Uygulama</span></div>
+        <div class="app"><i></i><span>Uygulama</span></div>
+        <div class="app"><i></i><span>Uygulama</span></div>
+        <div class="app"><i></i><span>Uygulama</span></div>
+        <div class="app k"><img src="koshi-M3-icon.svg" alt=""><span>Koshi · M3</span></div>
+      </div>
+    </div>
+    <div class="variants" id="variants"></div>
+  </div>
+</main>
+<script>
+const V = [
+  ['M1', 'Noktasız', 'Karakter tam merkezde, kompozisyon simetrik ve sakin. Kırmızı yalnızca zeminde kalıyor; en sade ve en "rozet" gibi duran seçenek.'],
+  ['M2', 'Çengelin ardında nokta', 'Karakter merkezde, kırmızı tanecik sağ alttaki çengelin hemen ardında, cümle sonu noktası gibi. 子, yani "tanecik" anlamı korunuyor.'],
+  ['M3', 'Çizginin ucunda nokta', 'Son çizgi sağa akıp kırmızı tanecikte bitiyor. Işığın yolunun sonunda bir parçacık: en "hareketli" olanı.'],
+];
+const box = document.getElementById('variants');
+for (const [id, name, text] of V) {
+  const sizes = (cls) => [192, 96, 48].map(s => `<img class="${cls}" src="koshi-${id}-icon.svg" width="${s}" height="${s}" alt="">`).join('');
+  box.insertAdjacentHTML('beforeend', `
+    <section class="v">
+      <div><h2><span>${id}</span>${name}</h2><p>${text}</p></div>
+      <div style="display:grid;gap:12px">
+        <div class="row black">${sizes('c')}${sizes('s')}</div>
+        <div class="row wall">${sizes('c')}${sizes('s')}</div>
+        <div class="row teal"><img class="s" src="koshi-${id}-mono.svg" width="96" height="96" alt=""><span class="caps" style="color:#f2f2f0">Temalı / tek renk</span></div>
+        <div class="lockup"><img src="koshi-${id}-icon.svg" alt=""><span class="wm" lang="en">KOSHI</span><span class="rule"></span><span class="wmjp jp">光子</span></div>
+      </div>
+    </section>`);
+}
+</script>
+</body>
+</html>

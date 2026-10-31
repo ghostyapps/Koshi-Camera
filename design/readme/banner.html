@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Rendered to screenshots/banner.png (1600×900) by design/readme/render.sh -->
+<style>
+@font-face { font-family: Barlow; font-weight: 300; src: url(../mockup/assets/Barlow-Light.ttf); }
+@font-face { font-family: Barlow; font-weight: 400; src: url(../mockup/assets/Barlow-Regular.ttf); }
+@font-face { font-family: Barlow; font-weight: 500; src: url(../mockup/assets/Barlow-Medium.ttf); }
+* { margin: 0; box-sizing: border-box; }
+html, body { width: 1600px; height: 900px; background: #000; color: #f2f2f0; font-family: Barlow, sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; }
+.left { position: absolute; left: 112px; top: 0; bottom: 0; width: 640px; display: flex; flex-direction: column; justify-content: center; }
+.icon { width: 132px; height: 132px; border-radius: 50%; margin-bottom: 44px; }
+.wm { display: flex; align-items: baseline; gap: 28px; }
+.wm b { font-weight: 500; font-size: 92px; letter-spacing: .3em; line-height: 1; }
+.wm span { font-family: "Hiragino Sans", "Hiragino Sans GB", sans-serif; font-size: 38px; color: #8c8c8a; letter-spacing: .12em; }
+.tag { font-weight: 300; font-size: 32px; line-height: 1.38; margin-top: 30px; max-width: 600px; }
+.caps { margin-top: 38px; font-weight: 500; font-size: 15px; letter-spacing: .22em; color: #8c8c8a; display: flex; gap: 18px; align-items: center; }
+.caps i { width: 7px; height: 7px; border-radius: 50%; background: #e2231a; display: inline-block; }
+.rule { position: absolute; left: 112px; right: 112px; bottom: 64px; height: 1px; background: rgba(255,255,255,.14); }
+.phones { position: absolute; right: 120px; top: 60px; bottom: 80px; display: flex; gap: 26px; align-items: center; }
+.phone { height: 740px; aspect-ratio: 1260 / 2800; border-radius: 40px; overflow: hidden; border: 1px solid #2a2a2a; background: #000; }
+.phone:nth-child(2) { height: 660px; opacity: .9; }
+.phone img { width: 100%; height: 100%; display: block; object-fit: cover; }
+</style>
+</head>
+<body>
+<div class="left">
+  <img class="icon" src="../mockup/logo/koshi-icon-512.png" alt="">
+  <div class="wm"><b>KOSHI</b><span>光子</span></div>
+  <p class="tag">A zero-processing manual camera for Android. What the sensor saw, nothing added.</p>
+  <div class="caps"><span>RAW</span><i></i><span>MANUAL</span><i></i><span>REAL LENSES</span><i></i><span>MANUAL FOCUS</span></div>
+</div>
+<div class="phones">
+  <div class="phone"><img src="raw/01-auto.png" alt=""></div>
+  <div class="phone"><img src="raw/03-focus.png" alt=""></div>
+</div>
+<div class="rule"></div>
+</body>
+</html>
