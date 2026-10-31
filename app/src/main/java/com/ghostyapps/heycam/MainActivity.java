@@ -103,7 +103,11 @@ public class MainActivity extends AppCompatActivity implements CameraController.
     private TextureView texture;
     private ViewfinderOverlay overlay;
     private HistogramView histogram;
-    private ImageView frameOverlay, thumb;
+    private ImageView frameOverlay, thumb, demoImage;
+    private Bitmap demoBitmap;
+    private long demoExposureNs;
+    private int demoIso;
+    private float demoFocus = -1f;
     private View curtain, toast, menu, sheetScrim;
     private TextView toastText, txtFormat, txtLut, txtTimer, txtFlash, txtCount, mode;
     private BatteryView battery;
@@ -188,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements CameraController.
         sound.setSoundEnabled(soundOn);
 
         bindViews();
+        loadDemoImage(getIntent());
         setupSheet();
         applyFormatUi();
         applyFlashUi();
@@ -276,6 +281,7 @@ public class MainActivity extends AppCompatActivity implements CameraController.
         overlay = findViewById(R.id.overlay);
         histogram = findViewById(R.id.histogram);
         frameOverlay = findViewById(R.id.frame_overlay);
+        demoImage = findViewById(R.id.demo_image);
         curtain = findViewById(R.id.curtain);
         toast = findViewById(R.id.toast);
         toastText = findViewById(R.id.toast_text);
@@ -430,6 +436,12 @@ public class MainActivity extends AppCompatActivity implements CameraController.
 
     @Override
     public void onLiveStatus(long exposureNs, int iso, float focusDiopters) {
+        if (demoBitmap != null && demoExposureNs > 0) {
+            // Demo screenshots: show readings that match the still image, not the room the phone is in.
+            exposureNs = demoExposureNs;
+            iso = demoIso;
+            focusDiopters = demoFocus;
+        }
         liveExposureNs = exposureNs;
         liveIso = iso;
         liveFocus = focusDiopters;
@@ -447,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements CameraController.
         curtain.setAlpha(1f);
         curtain.setVisibility(View.VISIBLE);
         curtain.animate().alpha(0f).setDuration(160).withEndAction(() -> curtain.setVisibility(View.GONE)).start();
-        Bitmap b = texture.getBitmap(120, 160);
+        Bitmap b = demoBitmap != null ? demoBitmap : texture.getBitmap(120, 160);
         if (b != null) thumb.setImageBitmap(b);
     }
 
@@ -680,6 +692,8 @@ public class MainActivity extends AppCompatActivity implements CameraController.
         android.graphics.Matrix m = new android.graphics.Matrix();
         m.setScale(s, s, texture.getWidth() / 2f, texture.getHeight() / 2f);
         texture.setTransform(m);
+        demoImage.setScaleX(s);
+        demoImage.setScaleY(s);
         overlay.setMagnified(on);
     }
 
@@ -841,9 +855,38 @@ public class MainActivity extends AppCompatActivity implements CameraController.
 
     // ================================================================== viewfinder extras
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        loadDemoImage(intent);
+    }
+
+    /**
+     * Debug builds only: {@code adb shell am start ... --es demo photo.jpg} shows
+     * files/demo/photo.jpg (copied in with {@code run-as}) in the viewfinder instead of the live feed,
+     * so screenshots can show a real scene. The rest of the UI stays live.
+     */
+    private void loadDemoImage(Intent intent) {
+        if (!BuildConfig.DEBUG || intent == null) return;
+        String name = intent.getStringExtra("demo");
+        if (name == null) return;
+        File f = new File(getFilesDir(), "demo/" + name);
+        demoBitmap = f.exists() ? BitmapFactory.decodeFile(f.getAbsolutePath()) : null;
+        demoImage.setImageBitmap(demoBitmap);
+        demoImage.setVisibility(demoBitmap != null ? View.VISIBLE : View.GONE);
+        if (demoBitmap != null) thumb.setImageBitmap(demoBitmap);
+        // Optional matching readings: --es demo_s 1/250 --ei demo_iso 50 --ef demo_focus 0
+        String sh = intent.getStringExtra("demo_s");
+        demoExposureNs = sh == null ? 0 : (long) (1e9 / Double.parseDouble(sh.replace("1/", "")));
+        demoIso = intent.getIntExtra("demo_iso", 100);
+        demoFocus = intent.getFloatExtra("demo_focus", 0f);
+    }
+
     private final Runnable histogramTick = new Runnable() {
         @Override public void run() {
-            if (histogramOn && texture.isAvailable()) {
+            if (histogramOn && demoBitmap != null) {
+                histogram.update(Bitmap.createScaledBitmap(demoBitmap, 64, 48, true));
+            } else if (histogramOn && texture.isAvailable()) {
                 if (histBitmap == null) histBitmap = Bitmap.createBitmap(64, 48, Bitmap.Config.ARGB_8888);
                 Bitmap b = texture.getBitmap(histBitmap);
                 if (b != null) histogram.update(b);
