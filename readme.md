@@ -1,88 +1,93 @@
-# Koshi 光子
+<p align="center">
+  <img src="design/mockup/logo/koshi-icon-512.png" width="112" alt="Koshi icon">
+</p>
 
-*Formerly HeyCam.* 光子 (kōshi) is Japanese for "photon" — a particle of light.
+<h1 align="center">Koshi 光子</h1>
 
-![HeyCam Screenshot](screenshots/screenshot_1.png)
+<p align="center">
+  A zero-processing manual camera for Android. What the sensor saw, nothing added.<br>
+  <sub>光子 (kōshi) is Japanese for <i>photon</i>, a particle of light. Formerly <b>HeyCam</b>.</sub>
+</p>
 
-## The Story Behind Koshi
+<p align="center">
+  <a href="../../releases/latest"><b>Download the latest release</b></a>
+</p>
 
-I was tired of every phone's native camera app constantly processing photos behind the scenes. AI enhancements, aggressive noise reduction, over-sharpening - I wondered: **could I build a camera app with zero processing?**
+![Koshi](screenshots/banner.png)
 
-My goal was simple: capture what the lens and sensor actually see, with minimal interference. I especially didn't want AI "improving" my photos. To achieve true control and zero processing, I created **Koshi**.
+## The story
 
-## What is Koshi?
+I was tired of every phone's camera app processing photos behind my back: AI "enhancements", aggressive noise reduction, over-sharpening. I wondered: **could I build a camera app with zero processing?**
 
-Koshi is a minimalist camera app with manual controls that lets you capture photos in both **JPEG** and **RAW (DNG)** formats. You have full control over your hardware, putting the power back in your hands.
+The goal is simple: capture what the lens and sensor actually see, as fast as possible, with nothing in between. That camera is **Koshi**.
 
-Since JPEG files still undergo some processing by Android's algorithms, I added **RAW support** for true zero-processing photography. 
-
-**Want true zero processing?** Switch to **Manual mode** and shoot in **RAW format**. The photos might look flat or low-quality at first - but that's the point! You're getting the unprocessed image data straight from the sensor.
+![Screens](screenshots/screens.png)
 
 ## Features
 
 ### 🎛️ Exposure, the way a camera shows it
-* **S · ISO · EV · F readout** under the viewfinder. In Auto the shutter speed and ISO the camera actually chose are shown live, marked with a red **A**.
-* **Ruler dial** in third stops for shutter, ISO and exposure compensation, limited to what your sensor supports.
-* **Tap S or ISO in Auto** to switch to Manual, starting from the metered exposure. Tap EV to go back.
-* **Tap to focus and lock** (AF-L); long-press to return to continuous AF. In Auto, the tap point is also metered.
+* An **S · ISO · EV · focus** readout sits under the viewfinder. In Auto, the shutter speed, ISO and focus distance the camera actually chose are shown live, marked with a red **A**.
+* A **ruler dial** in third stops controls shutter, ISO and exposure compensation, limited to what your sensor supports.
+* **Tap S or ISO** in Auto to switch to Manual, starting from the metered exposure. Tap EV to go back.
 
-### 🎯 Manual focus
-* Tap the focus cell (AF → MF) and turn the dial: distances from the lens's closest focus to ∞, like a lens barrel.
-* **Focus aid:** the centre is **magnified 2.5×** while your finger is on the focus dial.
-* In auto focus the cell shows the distance the lens is actually at, with a red **A**.
+### 🔭 Real lens switching
+* **.6× / 1× / 3×** stream straight from the ultra-wide, main and telephoto sensors. They switch lenses; they don't crop.
+* Many phones hide their multi-camera from apps. On the Nothing Phone (3) the real one is camera id 4, over sensors 0 / 2 / 3; Koshi finds it and locks the stream to the sensor you pick. Needs Android 10 or newer.
+
+### 🎯 Focus
+* **Manual focus:** tap the focus cell (AF → MF) and turn the dial like a lens barrel, from the lens's closest focus to ∞.
+* **Focus aid:** the centre of the viewfinder is magnified 2.5× for as long as your finger rests on the focus dial.
+* **Tap to focus** locks focus at that point (AF-L), and in Auto it also meters there. **Long-press** to return to continuous AF.
 
 ### 🧪 JPEG processing control
-* **Minimal** (default): no sharpening, minimal noise reduction, no distortion correction.
-* **Off**: no noise reduction, sharpening, hot-pixel, aberration or distortion correction, and a neutral sRGB tone curve.
-* **Device**: the phone's own processing, for comparison.
-* The viewfinder uses the same settings, so it shows what will be recorded.
+| Mode | What the phone is allowed to do |
+|---|---|
+| **Minimal** (default) | No sharpening, minimal noise reduction, no distortion correction |
+| **Off** | No noise reduction, sharpening, hot-pixel, aberration or distortion correction; neutral sRGB tone curve |
+| **Device** | The phone's own processing, for comparison |
 
-### ⚡ Fast capture pipeline
-* No focus or exposure sequence before a normal shot, and no preview restart after it.
-* Image buffers are released immediately; files are written on a separate thread, so bursts never wait for the disk.
-* Each DNG is paired with the capture data of its own exposure (by sensor timestamp) and embeds the lens shading map.
+The viewfinder uses the same settings, so it shows what will be recorded. In side-by-side tests, Device mode adds sharpening halos and synthetic texture, while Minimal and Off keep the sensor's real detail.
 
-### ⏱️ Interval timer
-* 1–30 s interval, 1–99 shots, countdown ring in the viewfinder, optional sound.
-* **Nothing Phone (3):** the countdown also runs on the Glyph Matrix.
+### 📷 RAW (DNG)
+* RAW is pure sensor data: no noise reduction, no sharpening, no tone curve. It is the only output guaranteed to be untouched, because some phones still process JPEGs even when asked not to.
+* Each DNG is paired with the capture data of its own exposure and embeds the lens shading map. On multi-camera phones it carries the selected sensor's colour and noise profile.
+
+### ⚡ Fast
+* There is no focus or exposure sequence before a normal shot and no preview restart after it.
+* Files are written on their own thread, so bursts never wait for the disk. On a Nothing Phone (3), a JPEG takes about 30–100 ms and a 25 MB DNG about 110 ms.
 
 ### 🖼️ LUTs & frames
-* Import `.cube` LUTs (applied with trilinear interpolation, so gradients don't band) and PNG frames.
-* EXIF (exposure, ISO, aperture, date, camera) is kept when a LUT or frame is applied.
-* LUTs and frames never touch DNG files.
+* Import `.cube` LUTs. They are applied with trilinear interpolation, so skies don't band.
+* Frames include **Darkroom** (a filed-carrier darkroom print) and **Gallery** (a caption passe-partout), plus the film classics.
+* EXIF data is kept when a LUT or frame is applied. LUTs and frames never touch DNG files.
 
-## Modes & Controls
+![Frames](screenshots/frames.png)
 
-### Auto
-- The camera meters; you set exposure compensation on the dial.
-- Shutter speed and ISO are shown live with a red **A**.
+### ⏱️ And
+* **Interval timer:** 1–30 s intervals and 1–99 shots, with a countdown ring in the viewfinder. On Nothing Phone (3) the countdown also runs on the **Glyph Matrix**.
+* **Shutter:** the on-screen button, the volume keys, a camera key, or the Essential Key on Nothing phones.
+* **Viewfinder tools:** live histogram and a rule-of-thirds grid.
 
-### Manual
-- You set shutter speed and ISO; the preview follows instantly.
-- Flash in Manual fires without overriding your settings.
+## Install
 
-### Shutter
-- On-screen button, volume keys, camera key, or the Essential Key on Nothing phones.
+| APK | For |
+|---|---|
+| `Koshi_v*-nothing.apk` | Nothing phones, Android 14+ (Glyph Matrix support) |
+| `Koshi_v*-standard.apk` | Other Android phones, Android 9+ |
 
-## Technical Details
-- **Real lens switching.** Some phones hide their multi-camera from apps (on the Nothing Phone (3) the real one is camera id 4, over sensors 0 / 2 / 3). Koshi finds it and streams straight from the chosen sensor, so **.6× / 1× / 3× switch lenses instead of cropping**. DNGs carry the selected sensor's own colour and noise data. Needs Android 10+.
-- **JPEG:** what the ISP produces after the processing level you choose. Some phones apply processing even when asked not to, so **RAW is the only guaranteed zero-processing output.**
-- **RAW:** unprocessed sensor data (DNG). Noise reduction and sharpening do not apply to RAW.
+1. Download the APK from [Releases](../../releases/latest).
+2. Allow installing apps from unknown sources.
+3. Install and grant camera access. Koshi installs as an update over HeyCam.
 
-## Why RAW?
-RAW files capture pure sensor data. They may look flatter or noisier, but they provide **unprocessed reality**. Edit these in Lightroom or Snapseed for maximum flexibility.
+Photos are saved to `Pictures/Koshi`.
 
-## Installation
-1. Download the latest APK from [Releases](../../releases).
-2. Enable "Install from unknown sources" in your Android settings.
-3. Install and grant camera permissions.
-
-## Technical Stack
-- **Language**: Java
-- **Camera API**: Camera2 (`camera/CameraController`, `camera/PhotoSaver`)
-- **UI**: Views with custom-drawn dial, viewfinder overlay and histogram; Barlow typeface (OFL)
-- **Key Libraries**: `com.nothing.ketchum` (Glyph SDK)
+## Under the hood
+* **Language:** Java, Camera2 API.
+* **Code:** `camera/CameraController` (session, per-request processing, lenses, focus), `camera/PhotoSaver` (MediaStore, DNG, LUT and frame rendering) and `camera/CaptureMatcher` (image ↔ result pairing).
+* **UI:** Android Views with a custom-drawn dial, viewfinder overlay and histogram, set in [Barlow](https://github.com/jpt/barlow) (OFL).
+* **Glyph:** `com.nothing.ketchum` (Glyph Matrix SDK).
+* **Design sources:** the UI mockup, logo studies and frame generator live in [`design/`](design/).
 
 ---
 
-**Note**: This app is designed for photographers who want full manual control. If you prefer point-and-shoot convenience with AI enhancements, your phone's native camera app might be a better choice.
+<sub>Koshi is made for people who want control. If you prefer point-and-shoot convenience with AI enhancements, your phone's own camera app is the better choice.</sub>

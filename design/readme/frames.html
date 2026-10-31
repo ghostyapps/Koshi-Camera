@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Rendered to screenshots/frames.png (1600×820) by design/readme/render.sh -->
+<style>
+@font-face { font-family: Barlow; font-weight: 500; src: url(../mockup/assets/Barlow-Medium.ttf); }
+@font-face { font-family: Barlow; font-weight: 300; src: url(../mockup/assets/Barlow-Light.ttf); }
+* { margin: 0; box-sizing: border-box; }
+html, body { width: 1600px; height: 820px; background: #161616; color: #f2f2f0; font-family: Barlow, sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; }
+.row { position: absolute; inset: 50px 80px; display: flex; gap: 96px; justify-content: center; align-items: flex-start; }
+figure { display: flex; flex-direction: column; align-items: center; }
+.shot { position: relative; height: 640px; background: center / cover no-repeat; }
+.shot.p { aspect-ratio: 3 / 4; }
+.shot.l { aspect-ratio: 4 / 3; height: 480px; margin-top: 80px; }
+.shot img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.shot.l img { width: 75%; height: 133.333%; left: 12.5%; top: -16.667%; transform: rotate(-90deg); }
+figcaption { margin-top: 20px; font-weight: 500; font-size: 14px; letter-spacing: .22em; text-transform: uppercase; }
+figcaption span { color: #8c8c8a; font-weight: 300; letter-spacing: .08em; text-transform: none; margin-left: 10px; }
+</style>
+</head>
+<body>
+<div class="row">
+  <figure><div class="shot p" style="background-image:url(../frames/sample_portrait.jpg)"><img src="../frames/Darkroom.png" alt=""></div><figcaption>Darkroom<span>filed-carrier print</span></figcaption></figure>
+  <figure><div class="shot p" style="background-image:url(../frames/sample_portrait.jpg)"><img src="../frames/Gallery.png" alt=""></div><figcaption>Gallery<span>caption passe-partout</span></figcaption></figure>
+</div>
+</body>
+</html>
