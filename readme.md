@@ -35,7 +35,7 @@ The goal is simple: capture what the lens and sensor actually see, as fast as po
 * Many phones hide their multi-camera from apps. On the Nothing Phone (3) the real one is camera id 4, over sensors 0 / 2 / 3; Koshi finds it and locks the stream to the sensor you pick. Needs Android 10 or newer.
 
 ### 🔗 QR links
-* Point the viewfinder at a QR code and a small button with the link's address appears above the lens picker. Tap it to open the link (http, https, mailto, tel). Nothing opens on its own. Switch it off under Menu → QR scan.
+* Point the viewfinder at a QR code and a small button with the link's address appears above the lens picker. Tap it to open the link (http, https, mailto, tel, and FIDO passkey sign-in codes). Nothing opens on its own. Switch it off under Menu → QR scan.
 
 ### 🎯 Focus
 * **Manual focus:** tap the focus cell (AF → MF) and turn the dial like a lens barrel, from the lens's closest focus to ∞.

@@ -79,7 +79,7 @@ public final class QrScanner {
         }
     }
 
-    /** Only http(s), mailto and tel are openable; a bare "www." or "example.com/x" is read as https. */
+    /** Only http(s), mailto, tel and fido (passkey sign-in) are openable; a bare "www." or "example.com/x" is read as https. */
     @Nullable
     static Uri parse(@Nullable String text) {
         if (text == null) return null;
@@ -87,8 +87,9 @@ public final class QrScanner {
         if (t.isEmpty() || t.length() > 2048 || t.contains("\n") || t.contains(" ")) return null;
         String lower = t.toLowerCase(Locale.ROOT);
         if (lower.startsWith("http://") || lower.startsWith("https://")
-                || lower.startsWith("mailto:") || lower.startsWith("tel:")) {
-            Uri u = Uri.parse(t);
+                || lower.startsWith("mailto:") || lower.startsWith("tel:") || lower.startsWith("fido:")) {
+            // Lower-case the scheme: "FIDO:/..." must match the handler's intent filter.
+            Uri u = Uri.parse(t).normalizeScheme();
             return u.getScheme() != null ? u : null;
         }
         if (lower.startsWith("www.")) return Uri.parse("https://" + t);

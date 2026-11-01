@@ -949,8 +949,10 @@ public class MainActivity extends AppCompatActivity implements CameraController.
             qrChip.setVisibility(View.GONE);
             return;
         }
-        String label = "http".equals(link.getScheme()) || "https".equals(link.getScheme())
-                ? link.getHost() : link.getSchemeSpecificPart();
+        String label;
+        if ("fido".equals(link.getScheme())) label = "Passkey sign-in";
+        else if ("http".equals(link.getScheme()) || "https".equals(link.getScheme())) label = link.getHost();
+        else label = link.getSchemeSpecificPart();
         qrChip.setText(label != null ? label : link.toString());
         if (qrChip.getVisibility() != View.VISIBLE) {
             qrChip.setAlpha(0f);
